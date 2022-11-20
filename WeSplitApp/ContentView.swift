@@ -36,6 +36,12 @@ struct ContentView: View {
         return FloatingPointFormatStyle<Double>.Currency.currency(code: Locale.current.currencyCode ?? "USD")
     }
     
+    private var tipErrorText: String {
+        return tipPercentage >= 10
+        ? ""
+        : "The tip amount is less than 10 percent!"
+    }
+    
     var body: some View {
         NavigationView {
             Form {
@@ -43,6 +49,8 @@ struct ContentView: View {
                     TextField("Amount", value: $checkAmount, format: currencyFormat)
                         .keyboardType(.decimalPad)
                         .focused($amountIsFocused)
+                } header: {
+                    Text("Check amount")
                 }
                 Section {
                     Picker("Number of people", selection: $numberOfPeople) {
@@ -50,8 +58,6 @@ struct ContentView: View {
                             Text("\($0) people")
                         }
                     }
-                } header: {
-                    Text("How much tip do you want to leave?")
                 }
                 Section {
                     Picker("Tip percentage", selection: $tipPercentage) {
@@ -64,6 +70,9 @@ struct ContentView: View {
                     Text(totalPerPerson, format: .currency(code: currencyFormat.currencyCode))
                 } header: {
                     Text("Total amount")
+                } footer: {
+                    Text(tipErrorText)
+                        .foregroundColor(.red)
                 }
                 Section {
                     Text(grandTotal, format: .currency(code: currencyFormat.currencyCode))
@@ -80,6 +89,7 @@ struct ContentView: View {
                     }
                 }
             }
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
